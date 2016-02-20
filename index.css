@@ -6,3 +6,7 @@
 .number-controls {
 	margin: 0 3px 0 0;
 }
+
+.number-controls:first-child {
+	margin-left: 3px;
+}

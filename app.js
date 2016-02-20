@@ -68,35 +68,41 @@ PaginationTable.prototype._constructControls = function() {
 	return $controls;
 };
 
-
-PaginationTable.prototype._constructNumberControls = function(first_argument) {
-	var template = '';
-	var self = this;
+/**
+ * [_constructNumberControls Construct the number controls]
+ * @return {[object]}                [the number controls elements after being created]
+ */
+PaginationTable.prototype._constructNumberControls = function() {
+	var $numberControls = $('<span class="number-controls-container"></span>');
 
 	_.forEach(this.groupedCollection, function(group, i) {
-		template += _.template('<span class="btn number-controls" data-id="<%= i %>"><%= i %></span>')({
+		var $numberControl = $(_.template('<span class="btn number-controls" data-id="<%= i %>"><%= i %></span>')({
 				i: i 
-			});
+			}));
+		$numberControls.append($numberControl);
 	});
 
-	return $(template);
+	return $numberControls;
 };
 
 /**
  * [_constructHeader Construct the table header]
  */
 PaginationTable.prototype._constructHeader = function($table) {
-	var tableHeaders = '<tr class="table-header">';
-	var headerNames = this.columns.map(function(col) {
-		return col.name;
-	});
+	var $tableHeaders = $('<tr class="table-header"></tr>');
   
-  _.forEach(headerNames, function(h) {
-    tableHeaders += '<th>' + h + '</th>';
+  _.forEach(this.columns, function(col) {
+  	var $header = $('<th>' + col.name + '</th>');
+  	if (col.isSortable) {
+  		$header.attr('data-sort-key', col.key);
+  		$header.attr('data-increase-order', 1);
+  		$header.append('<span class="order-indicator"> - </span>');
+  	}
+  	
+  	$tableHeaders.append($header);
   });
   
-  tableHeaders += '</tr>';  
-  $table.append($(tableHeaders));
+  $table.append($tableHeaders);
 };
 
 
@@ -125,6 +131,7 @@ PaginationTable.prototype._constructOneRow= function(data) {
 
 /**
  * [_constructRows Construct all the rows for current page]
+ * @param {object} [$table] [The table element that rows append to]
  */
 PaginationTable.prototype._constructRows = function($table) {
 	var data = this.groupedCollection[this.pageId];
@@ -150,7 +157,6 @@ PaginationTable.prototype._updateNumberControls = function() {
 	var otherControls = this.$controls.find('[data-id!="'+ this.pageId + '"]');
 	$(currentIndexControls).addClass('btn-primary');
 	$(otherControls).removeClass('btn-primary');
-
 };
 
 /**
@@ -163,9 +169,14 @@ PaginationTable.prototype.render = function() {
 	this.$container.append(this.$table);
 	this.$container.append(this.$controls);
 	this._updateNumberControls();
+  this._bindControlsEvents(); 
+  this._bindSortEvent();
+};
 
-
-  // bind events
+/**
+ * [_bindEvents Bind events events for controls]
+ */
+PaginationTable.prototype._bindControlsEvents = function() {
 	this.$leftControls = $(this.$controls.find('#left-arrow'));
 	this.$rightControls = $(this.$controls.find('#right-arrow'));
 	this.$numberControls = $(this.$controls.find('.number-controls'));
@@ -185,6 +196,38 @@ PaginationTable.prototype.render = function() {
 		self._constructRows(self.$table);
 		self._updateNumberControls();
 	});
+};
+
+
+PaginationTable.prototype._bindSortEvent = function() {
+	var $sortableHeaders = this.$table.find('[data-sort-key]');
+	var self = this;
+
+	$sortableHeaders.on('click', function() {
+		var key = $(this).attr('data-sort-key');
+		var increasing = parseInt($(this).attr('data-increase-order'));
+
+		var indicator = $(this).find('.order-indicator');
+		$(indicator).text(1 - increasing ? '﹀' : '^');
+
+		self._sortByKey(key, increasing);
+	  self._clearRows();
+	  self._constructRows(self.$table);
+		self._updateNumberControls();
+	  $(this).attr('data-increase-order', 1 - increasing);
+	});
+};
+
+
+PaginationTable.prototype._sortByKey = function(key, increasing) {
+	this.collection = _.sortBy(this.collection, function(item) {
+		return item[key];
+	});
+	if (!increasing) {
+		this.collection.reverse();
+	}
+	this.groupedCollection = this._groupCollection();
+	this.pageId = 0;
 };
 
 
@@ -251,13 +294,48 @@ var response = {
         'name': 'Tom',
         'description': 'Hi this is Tom',
         'id': '12349'
-      }  
+      },
+      {
+        'imageUrl' : 'https://www.bankofenglandearlycareers.co.uk/media/2747/blank-profile.jpg',
+        'username': 'amy',
+        'name': 'Amy',
+        'description': 'Hi this is Amy',
+        'id': '13239'
+      },
+      {
+        'imageUrl' : 'https://www.bankofenglandearlycareers.co.uk/media/2747/blank-profile.jpg',
+        'username': 'mike',
+        'name': 'Mike',
+        'description': 'Hi this is Mike',
+        'id': '13784'
+      },
+      {
+        'imageUrl' : 'https://www.bankofenglandearlycareers.co.uk/media/2747/blank-profile.jpg',
+        'username': 'anna',
+        'name': 'Anna',
+        'description': 'Hi this is Anna',
+        'id': '13982'
+      },
+      {
+        'imageUrl' : 'https://www.bankofenglandearlycareers.co.uk/media/2747/blank-profile.jpg',
+        'username': 'zac',
+        'name': 'Zac',
+        'description': 'Hi this is Zac',
+        'id': '13384'
+      },
+      {
+        'imageUrl' : 'https://www.bankofenglandearlycareers.co.uk/media/2747/blank-profile.jpg',
+        'username': 'frank',
+        'name': 'Frank',
+        'description': 'Hi this is Frank',
+        'id': '13084'
+      }
   ]
 };
 
 
 var $container = $('.table-container');
-var ROWS_ON_PAGE = 2;
+var ROWS_ON_PAGE = 3;
 var columns = [
   {
 		name: 'Image Url',
@@ -266,7 +344,8 @@ var columns = [
 	},
   {
 		name: 'Name',
-		key: 'name'
+		key: 'name',
+		isSortable: true
 	},
 	{
 		name: 'User Name',
@@ -274,7 +353,8 @@ var columns = [
 	},	
 	{
 		name: 'ID',
-		key: 'id'
+		key: 'id',
+		isSortable: true
 	},
 	{
 		name: 'Description',
@@ -285,10 +365,3 @@ var columns = [
 
 var myTable = new PaginationTable(response.people, columns, ROWS_ON_PAGE, $container);
 myTable.render();
-
-
-
-// style polish
-// indicator
-// sort function
-// search function
