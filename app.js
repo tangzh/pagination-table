@@ -8,13 +8,13 @@
  */
 
 var PaginationTable = function(options) {
-	this.collection = options.collection || [];
-	this.columns = options.columns || {};
-	this.rowsOnePage = options.rowsOnePage || 100;
-	this.$container = options.container;
+  this.collection = options.collection || [];
+  this.columns = options.columns || {};
+  this.rowsOnePage = options.rowsOnePage || 100;
+  this.$container = options.container;
 
-	this.pageId = 0;
-	this.groupedCollection = this._groupCollection();
+  this.pageId = 0;
+  this.groupedCollection = this._groupCollection();
 };
 
 
@@ -23,7 +23,7 @@ var PaginationTable = function(options) {
  * @return {[array]} [the result after grouping]
  */
 PaginationTable.prototype._groupCollection = function() {
-	var groupedArray = [];
+  var groupedArray = [];
   
   for(var i=0; i<this.collection.length; i++) {
     if (i % this.rowsOnePage === 0) {
@@ -41,13 +41,13 @@ PaginationTable.prototype._groupCollection = function() {
  * @return {[object]} [the table element after being constructed]
  */
 PaginationTable.prototype._constructTable = function() {
-	var template = '<table class="table table-bordered pagination-table"></table>';
+  var template = '<table class="table table-bordered pagination-table"></table>';
   var $table = $(template); 
 
-	this._constructHeader($table);
-	this._constructRows($table);
+  this._constructHeader($table);
+  this._constructRows($table);
 
-	return $table;
+  return $table;
 };
 
 /**
@@ -55,18 +55,18 @@ PaginationTable.prototype._constructTable = function() {
  * @return {[object]} [the controls element after being constructed]
  */
 PaginationTable.prototype._constructControls = function() {
-	var template = '<div class="controls"></div>';
-	var $controls = $(template);
+  var template = '<div class="controls"></div>';
+  var $controls = $(template);
 
-	var $leftControls = $('<span class="arrow btn" id="left-arrow"><</span>');
-	var $rightControls = $('<span class="arrow btn" id="right-arrow">></span>');
+  var $leftControls = $('<span class="arrow btn" id="left-arrow"><</span>');
+  var $rightControls = $('<span class="arrow btn" id="right-arrow">></span>');
 
-	var $numberControls = this._constructNumberControls();
+  var $numberControls = this._constructNumberControls();
 
-	$controls.append($leftControls);	
-	$controls.append($numberControls);
-	$controls.append($rightControls);
-	return $controls;
+  $controls.append($leftControls);  
+  $controls.append($numberControls);
+  $controls.append($rightControls);
+  return $controls;
 };
 
 /**
@@ -74,16 +74,16 @@ PaginationTable.prototype._constructControls = function() {
  * @return {[object]}                [the number controls elements after being created]
  */
 PaginationTable.prototype._constructNumberControls = function() {
-	var $numberControls = $('<span class="number-controls-container"></span>');
+  var $numberControls = $('<span class="number-controls-container"></span>');
 
-	_.forEach(this.groupedCollection, function(group, i) {
-		var $numberControl = $(_.template('<span class="btn number-controls" data-id="<%= i %>"><%= i + 1 %></span>')({
-				i: i 
-			}));
-		$numberControls.append($numberControl);
-	});
+  _.forEach(this.groupedCollection, function(group, i) {
+    var $numberControl = $(_.template('<span class="btn number-controls" data-id="<%= i %>"><%= i + 1 %></span>')({
+        i: i 
+      }));
+    $numberControls.append($numberControl);
+  });
 
-	return $numberControls;
+  return $numberControls;
 };
 
 /**
@@ -91,17 +91,17 @@ PaginationTable.prototype._constructNumberControls = function() {
  * increase order: 0 -> not sorting; 1 -> increase; 2 -> decrease
  */
 PaginationTable.prototype._constructHeader = function($table) {
-	var $tableHeaders = $('<tr class="table-header"></tr>');
+  var $tableHeaders = $('<tr class="table-header"></tr>');
   
   _.forEach(this.columns, function(col) {
-  	var $header = $('<th>' + col.name + '</th>');
-  	if (col.isSortable) {
-  		$header.attr('data-sort-key', col.key);
-  		$header.attr('data-increase-order', 0);
-	  	$header.append('<span class="order-indicator"> - </span>');		
-  	}
-  	
-  	$tableHeaders.append($header);
+    var $header = $('<th>' + col.name + '</th>');
+    if (col.isSortable) {
+      $header.attr('data-sort-key', col.key);
+      $header.attr('data-increase-order', 0);
+      $header.append('<span class="order-indicator"> - </span>');   
+    }
+    
+    $tableHeaders.append($header);
   });
   
   $table.append($tableHeaders);
@@ -114,14 +114,14 @@ PaginationTable.prototype._constructHeader = function($table) {
  * @return {[object]}      [the table row that gets constructed]
  */
 PaginationTable.prototype._constructOneRow= function(data) {
-	var template = '<tr class="table-row">>';
+  var template = '<tr class="table-row">>';
   
   _.forEach(this.columns, function(col) {
-  	if (col.isImage) {
-  		template += '<td>' + '<image class="td-image" src=' + data[col.key] + '>' + '</td>';
-  	} else {
-  		template += '<td>' + data[col.key] + '</td>';
-  	}
+    if (col.isImage) {
+      template += '<td>' + '<image class="td-image" src=' + data[col.key] + '>' + '</td>';
+    } else {
+      template += '<td>' + data[col.key] + '</td>';
+    }
     
   });
   
@@ -136,14 +136,14 @@ PaginationTable.prototype._constructOneRow= function(data) {
  * @param {object} [$table] [The table element that rows append to]
  */
 PaginationTable.prototype._constructRows = function($table) {
-	var data = this.groupedCollection[this.pageId];
-	var self = this;
-	$table = $table || this.$table;
+  var data = this.groupedCollection[this.pageId];
+  var self = this;
+  $table = $table || this.$table;
 
-	_.forEach(data, function(d) {
-		var $row = self._constructOneRow(d);
-		$table.append($row);
-	});
+  _.forEach(data, function(d) {
+    var $row = self._constructOneRow(d);
+    $table.append($row);
+  });
 };
 
 
@@ -151,27 +151,27 @@ PaginationTable.prototype._constructRows = function($table) {
  * [_clearRows Clear all the rows for current page]
  */
 PaginationTable.prototype._clearRows = function() {
-	this.$table.find('.table-row').remove();
+  this.$table.find('.table-row').remove();
 };
 
 
 PaginationTable.prototype._updateNumberControls = function() {
-	var currentIndexControls = this.$controls.find('[data-id="'+ this.pageId + '"]');
-	var otherControls = this.$controls.find('[data-id!="'+ this.pageId + '"]');
-	$(currentIndexControls).addClass('btn-primary');
-	$(otherControls).removeClass('btn-primary');
+  var currentIndexControls = this.$controls.find('[data-id="'+ this.pageId + '"]');
+  var otherControls = this.$controls.find('[data-id!="'+ this.pageId + '"]');
+  $(currentIndexControls).addClass('btn-primary');
+  $(otherControls).removeClass('btn-primary');
 };
 
 /**
  * [render To render the table inside the container]
  */
 PaginationTable.prototype.render = function() {
-	this.$table = this._constructTable();
-	this.$controls = this._constructControls();
+  this.$table = this._constructTable();
+  this.$controls = this._constructControls();
 
-	this.$container.append(this.$table);
-	this.$container.append(this.$controls);
-	this._updateNumberControls();
+  this.$container.append(this.$table);
+  this.$container.append(this.$controls);
+  this._updateNumberControls();
   this._bindControlsEvents(); 
   this._bindSortEvent();
 };
@@ -180,58 +180,58 @@ PaginationTable.prototype.render = function() {
  * [_bindEvents Bind events events for controls]
  */
 PaginationTable.prototype._bindControlsEvents = function() {
-	this.$leftControls = $(this.$controls.find('#left-arrow'));
-	this.$rightControls = $(this.$controls.find('#right-arrow'));
-	this.$numberControls = $(this.$controls.find('.number-controls'));
+  this.$leftControls = $(this.$controls.find('#left-arrow'));
+  this.$rightControls = $(this.$controls.find('#right-arrow'));
+  this.$numberControls = $(this.$controls.find('.number-controls'));
 
   var self = this;
-	this.$leftControls.on('click', function() {
-		self.movePrev();
-	});
+  this.$leftControls.on('click', function() {
+    self.movePrev();
+  });
 
-	this.$rightControls.on('click', function() {
-		self.moveNext();
-	});
+  this.$rightControls.on('click', function() {
+    self.moveNext();
+  });
 
-	this.$numberControls.on('click', function() {
-		self.pageId = $(this).attr('data-id');
-		self._clearRows();
-		self._constructRows();
-		self._updateNumberControls();
-	});
+  this.$numberControls.on('click', function() {
+    self.pageId = $(this).attr('data-id');
+    self._clearRows();
+    self._constructRows();
+    self._updateNumberControls();
+  });
 };
 
 
 PaginationTable.prototype._bindSortEvent = function() {
-	var $sortableHeaders = this.$table.find('[data-sort-key]');
-	var self = this;
+  var $sortableHeaders = this.$table.find('[data-sort-key]');
+  var self = this;
 
-	$sortableHeaders.on('click', function() {
-		var key = $(this).attr('data-sort-key');
-		var oldOrder = parseInt($(this).attr('data-increase-order'));
-		var newOrder = oldOrder === 0 ? 1 : 3 - oldOrder;
-		$($sortableHeaders.find('[data-sort-key!="' + key + '"]')).text('-');
-		var indicator = $(this).find('.order-indicator');
-		$(indicator).text(newOrder === 2 ? '↓' : '↑');
+  $sortableHeaders.on('click', function() {
+    var key = $(this).attr('data-sort-key');
+    var oldOrder = parseInt($(this).attr('data-increase-order'));
+    var newOrder = oldOrder === 0 ? 1 : 3 - oldOrder;
+    $($sortableHeaders.find('[data-sort-key!="' + key + '"]')).text('-');
+    var indicator = $(this).find('.order-indicator');
+    $(indicator).text(newOrder === 2 ? '↓' : '↑');
 
-		self._sortByKey(key, newOrder);
-	  self._clearRows();
-	  self._constructRows();
-		self._updateNumberControls();
-	  $(this).attr('data-increase-order', newOrder);
-	});
+    self._sortByKey(key, newOrder);
+    self._clearRows();
+    self._constructRows();
+    self._updateNumberControls();
+    $(this).attr('data-increase-order', newOrder);
+  });
 };
 
 
 PaginationTable.prototype._sortByKey = function(key, order) {
-	this.collection = _.sortBy(this.collection, function(item) {
-		return item[key];
-	});
-	if (order === 2) {
-		this.collection.reverse();
-	}
-	this.groupedCollection = this._groupCollection();
-	this.pageId = 0;
+  this.collection = _.sortBy(this.collection, function(item) {
+    return item[key];
+  });
+  if (order === 2) {
+    this.collection.reverse();
+  }
+  this.groupedCollection = this._groupCollection();
+  this.pageId = 0;
 };
 
 
@@ -239,24 +239,24 @@ PaginationTable.prototype._sortByKey = function(key, order) {
  * [moveNext Show the next page if applicable ]
  */
 PaginationTable.prototype.moveNext = function() {
-	if (this.pageId < this.groupedCollection.length - 1 ) {
-		this.pageId ++;
-		this._clearRows();
-		this._constructRows();
-		this._updateNumberControls();
-	} 	
+  if (this.pageId < this.groupedCollection.length - 1 ) {
+    this.pageId ++;
+    this._clearRows();
+    this._constructRows();
+    this._updateNumberControls();
+  }   
 };
 
 /**
  * [movePrev Show the previous page if applicable]
  */
 PaginationTable.prototype.movePrev = function() {
-	if (this.pageId > 0) {
-		this.pageId --;
-		this._clearRows();
-		this._constructRows();
-		this._updateNumberControls();
-	} 
+  if (this.pageId > 0) {
+    this.pageId --;
+    this._clearRows();
+    this._constructRows();
+    this._updateNumberControls();
+  } 
 };
 
 var app = app || {};
@@ -346,35 +346,35 @@ var $container = $('.table-container');
 var ROWS_ON_PAGE = 3;
 var columns = [
   {
-		name: 'Image',
-		key: 'imageUrl',
-		isImage: true
-	},
+    name: 'Image',
+    key: 'imageUrl',
+    isImage: true
+  },
   {
-		name: 'Name',
-		key: 'name',
-		isSortable: true
-	},
-	{
-		name: 'User Name',
-		key: 'username'
-	},	
-	{
-		name: 'ID',
-		key: 'id',
-		isSortable: true
-	},
-	{
-		name: 'Description',
-		key: 'description'
-	}	
+    name: 'Name',
+    key: 'name',
+    isSortable: true
+  },
+  {
+    name: 'User Name',
+    key: 'username'
+  },  
+  {
+    name: 'ID',
+    key: 'id',
+    isSortable: true
+  },
+  {
+    name: 'Description',
+    key: 'description'
+  } 
 ];
 
 var tableOptions = {
-	collection: response.people,
-	columns: columns,
-	rowsOnePage: ROWS_ON_PAGE,
-	container: $container
+  collection: response.people,
+  columns: columns,
+  rowsOnePage: ROWS_ON_PAGE,
+  container: $container
 };
 
 var peopleTable = new app.Components.PaginationTable(tableOptions);
