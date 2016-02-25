@@ -41,7 +41,7 @@ PaginationTable.prototype._groupCollection = function() {
  * @return {[object]} [the table element after being constructed]
  */
 PaginationTable.prototype._constructTable = function() {
-	var template = '<table class="table table-bordered people-list-table"></table>';
+	var template = '<table class="table table-bordered pagination-table"></table>';
   var $table = $(template); 
 
 	this._constructHeader($table);
@@ -138,7 +138,7 @@ PaginationTable.prototype._constructOneRow= function(data) {
 PaginationTable.prototype._constructRows = function($table) {
 	var data = this.groupedCollection[this.pageId];
 	var self = this;
-	var $table = $table || this.$table;
+	$table = $table || this.$table;
 
 	_.forEach(data, function(d) {
 		var $row = self._constructOneRow(d);
@@ -259,6 +259,10 @@ PaginationTable.prototype.movePrev = function() {
 	} 
 };
 
+var app = app || {};
+app.Components = app.Components || {};
+app.Components.PaginationTable = PaginationTable;
+
 /*--------------------------------------------------------------*/ 
 
 // JSON reponse
@@ -373,6 +377,5 @@ var tableOptions = {
 	container: $container
 };
 
-
-var myTable = new PaginationTable(tableOptions);
-myTable.render();
+var peopleTable = new app.Components.PaginationTable(tableOptions);
+peopleTable.render();
